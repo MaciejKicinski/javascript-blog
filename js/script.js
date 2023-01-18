@@ -110,11 +110,8 @@ function generateTags() {
 
     /* END LOOP: for every article: */
   }
-  const links = document.querySelectorAll('.list-horizontal a');
 
-  for (let link of links) {
-    link.addEventListener('click', tagClickHandler);
-  }
+
 }
 
 generateTags();
@@ -164,9 +161,12 @@ function tagClickHandler(event) {
 
 function addClickListenersToTags() {
   /* find all links to tags */
+  const links = document.querySelectorAll('.list-horizontal a');
 
   /* START LOOP: for each link */
-
+  for (let link of links) {
+    link.addEventListener('click', tagClickHandler);
+  }
   /* add tagClickHandler as event listener for that link */
 
   /* END LOOP: for each link */
