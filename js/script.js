@@ -39,6 +39,8 @@ const optTitleListSelector = '.titles';
 const optArticleTagsSelector = '.post-tags .list';
 const optArticleAuthorSelector = '.post-author';
 const optTagsListSelector = '.tags';
+const optCloudClassCount = 5;
+const optCloudClassPrefix = 'tag-size-';
 
 
 function generateTitleLinks(customSelector = '') {
@@ -80,6 +82,15 @@ function generateTitleLinks(customSelector = '') {
 }
 generateTitleLinks();
 
+function calculateTagClass(count, params) {
+  const normalizedCount = count - params.min;
+  const normalizedMax = params.max - params.min;
+  const percentage = normalizedCount / normalizedMax;
+  const classNumber = Math.floor(percentage * (optCloudClassCount - 1) + 1);
+
+  console.log(classNumber);
+  return optCloudClassPrefix + classNumber;
+}
 
 function generateTags() {
   /* [NEW] create a new variable allTags with an empty object */
@@ -129,15 +140,34 @@ function generateTags() {
   const tagList = document.querySelector(optTagsListSelector);
   console.log(tagList);
 
+
+  const tagsParams = calculateTagsParams(allTags);
+  console.log(tagsParams);
+
   /* [NEW] add html from allTags to tagList */
   let allTagsHTML = '';
+
   for (let tag in allTags) {
-    allTagsHTML += tag + '(' + allTags[tag] + ')<br>';
+    //const tagLinkHTML = '<li>' + calculateTagClass(allTags[tag], tagsParams) + '</li>';
+
+    const tagLinkHTML = '<li><a class="' + calculateTagClass(allTags[tag], tagsParams) + '" href="#tag-' + tag + '">' + tag + '</a></li>';
+    allTagsHTML += tagLinkHTML;
   }
+
   tagList.innerHTML = allTagsHTML;
 }
 
+function calculateTagsParams(tags) {
+  const params = { max: 0, min: 999999 };
 
+  for (let tag in tags) {
+    console.log(tag + ' is used ' + tags[tag] + ' times');
+    params.max = Math.max(tags[tag], params.max);
+    params.min = Math.min(tags[tag], params.min);
+  }
+
+  return params;
+}
 
 generateTags();
 
@@ -186,7 +216,8 @@ function tagClickHandler(event) {
 
 function addClickListenersToTags() {
   /* find all links to tags */
-  const links = document.querySelectorAll('.list-horizontal a');
+  //const links = document.querySelectorAll('.list-horizontal a');
+  const links = document.querySelectorAll('a[href^="#tag-"]');
 
   /* START LOOP: for each link */
   for (let link of links) {
